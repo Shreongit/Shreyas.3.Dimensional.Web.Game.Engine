@@ -12,3 +12,8 @@ export { Material } from "./rendering/Material.js";
 export { ShaderProgram } from "./rendering/ShaderProgram.js";
 export { Renderer } from "./rendering/Renderer.js";
 export { RenderLoop } from "./rendering/RenderLoop.js";
+
+export { ResourceManager } from "./systems/ResourceManager.js";
+export { EventEmitter } from "./systems/EventEmitter.js";
+export { InputManager } from "./systems/InputManager.js";
+export { GLTFLoader } from "./assets/GLTFLoader.js";

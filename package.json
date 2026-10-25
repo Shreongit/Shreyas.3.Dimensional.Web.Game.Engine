@@ -1,6 +1,6 @@
 {
   "name": "s3dwge",
-  "version": "0.2.0-renderer.1",
+  "version": "0.3.0-engine-systems.1",
   "description": "Shreyas 3D Web Game Engine — WebGL 2 rendering milestone",
   "type": "module",
   "private": true,

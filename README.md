@@ -1,8 +1,8 @@
 # S3DWGE — Stage 2: WebGL 2 Rendering
 
-**Version `0.2.0-renderer.1`**
+**Version `0.3.0-engine-systems.1`**
 
-Stage 2 adds a working browser renderer to the S3DWGE foundation: WebGL 2, perspective camera, indexed triangle meshes, shader programs, materials, depth testing, directional lighting, and a rotating-cube demo.
+Stage 3 extends the WebGL 2 renderer with reusable engine systems: event subscriptions, keyboard/pointer input, asynchronous resource caching, and a source-first glTF 2.0 / GLB 2.0 geometry loader.
 
 ## Features
 - WebGL 2 renderer with explicit lifecycle and viewport resizing.
@@ -13,6 +13,10 @@ Stage 2 adds a working browser renderer to the S3DWGE foundation: WebGL 2, persp
 - Scene traversal for entities with `mesh` and `material`.
 - `requestAnimationFrame` render loop with stop/dispose handling.
 - No third-party runtime dependencies.
+- Event emitter with once/off/AbortSignal support.
+- Input manager with pressed/down/released keyboard states and pointer deltas.
+- Resource manager with typed loaders, in-flight request de-duplication, caching and invalidation.
+- glTF/GLB loader for triangle mesh geometry, buffers, accessors, node transforms and generated normals.
 
 ## Requirements
 - Node.js 18+ for tests and local server.
@@ -38,15 +42,36 @@ import { Renderer, Camera, Mesh, Material } from "./src/index.js";
 - Matrices use column-major storage and column-vector multiplication.
 - Projection uses WebGL clip-space depth `-1` to `+1`.
 
+## Stage 3 quick examples
+
+```js
+import { EventEmitter, InputManager, ResourceManager, GLTFLoader } from "./src/index.js";
+
+const events = new EventEmitter();
+const off = events.on("level-loaded", ({ name }) => console.log(name));
+events.emit("level-loaded", { name: "intro" });
+off();
+
+const input = new InputManager().attach(window);
+// In your update loop: if (input.wasPressed("Space")) jump();
+// At the end of each frame: input.endFrame();
+
+const resources = new ResourceManager();
+const config = await resources.load("./config.json", "json");
+const gltf = await new GLTFLoader().load("./assets/scene.gltf");
+```
+
 ## Architecture
 - `src/math/`: vector, quaternion, matrix primitives.
 - `src/core/`: transform, entity, scene, engine.
 - `src/rendering/`: renderer, camera, mesh, material, shader.
+- `src/systems/`: input, events, resource cache.
+- `src/assets/`: glTF 2.0 / GLB 2.0 geometry loader.
 - `examples/`: browser demo.
 - `tests/`: unit and contract tests.
 
-## Limitations
-This milestone is not a finished commercial engine. It does not include glTF/GLB loading, shadows, post-processing, animation, editor, audio, physics, or WebGPU. WebGL 2 is required. Node tests cannot replace real browser/GPU verification.
+## Stage 3 limitations
+The glTF loader currently supports triangle primitives with POSITION, optional NORMAL, and optional indices. Sparse accessors, non-triangle modes, materials/textures, skinning, animations, morph targets, Draco compression and full scene-to-renderer instantiation are not implemented yet. The resource manager does not automatically dispose cached GPU resources. Shadows, post-processing, editor, audio, physics and WebGPU are also future work. WebGL 2 is required for rendering; Node tests cannot replace real browser/GPU verification.
 
 ## License
 Proprietary — educational viewing only. See [LICENSE](./LICENSE). Public visibility does not grant permission to copy, modify, redistribute, or reuse this code.

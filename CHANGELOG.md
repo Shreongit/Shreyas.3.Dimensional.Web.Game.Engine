@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.1.0-foundation.1
-
-- Established the initial 3D math foundation.
-- Added quaternion and column-major matrix primitives.
-- Added transforms, entities, components, scenes, and a fixed-step engine loop.
-- Added Node.js unit tests and a syntax-check script.
+## 0.2.0-renderer.1
+- Added WebGL 2 renderer and resource lifecycle.
+- Added perspective camera, indexed mesh, material and GLSL ES 3.00 shaders.
+- Added depth testing, viewport resize handling, directional lighting and render loop.
+- Added rotating cube demo and local development server.
+- Added renderer and shader contract tests.

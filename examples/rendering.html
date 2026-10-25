@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>S3DWGE — Stage 2 Renderer Demo</title>
+  <link rel="stylesheet" href="./rendering.css">
+</head>
+<body>
+  <main class="app">
+    <header>
+      <p class="eyebrow">S3DWGE · STAGE 2</p>
+      <h1>WebGL 2 Renderer</h1>
+      <p class="subtitle">A live 3D cube with perspective projection, depth testing and directional lighting.</p>
+    </header>
+    <section class="viewport" aria-label="3D demo viewport">
+      <canvas id="game-canvas" aria-label="Rotating 3D cube"></canvas>
+      <div id="status" class="status" role="status">Initializing WebGL 2…</div>
+    </section>
+    <footer>
+      <span>WebGL 2 · GLSL ES 3.00</span>
+      <button id="toggle" type="button" disabled>Pause rotation</button>
+      <span id="fps">FPS —</span>
+    </footer>
+    <p class="note">If the demo cannot start, enable hardware acceleration and verify WebGL 2 support in your browser.</p>
+  </main>
+  <script type="module" src="./rendering-demo.js"></script>
+</body>
+</html>

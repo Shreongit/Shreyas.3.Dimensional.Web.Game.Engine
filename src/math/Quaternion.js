@@ -1,55 +1,18 @@
 import { Vector3 } from "./Vector3.js";
-
-const EPSILON = 1e-12;
-
+const EPSILON=1e-12;
 export class Quaternion {
-  constructor(x = 0, y = 0, z = 0, w = 1) {
-    this.x = x; this.y = y; this.z = z; this.w = w;
-  }
-  set(x, y, z, w) { this.x = x; this.y = y; this.z = z; this.w = w; return this; }
-  copy(q) { return this.set(q.x, q.y, q.z, q.w); }
-  clone() { return new Quaternion(this.x, this.y, this.z, this.w); }
-  lengthSquared() { return this.x*this.x + this.y*this.y + this.z*this.z + this.w*this.w; }
-  normalize() {
-    const len = Math.sqrt(this.lengthSquared());
-    if (len <= EPSILON) return this.set(0, 0, 0, 1);
-    this.x /= len; this.y /= len; this.z /= len; this.w /= len;
-    return this;
-  }
-  conjugate() { this.x = -this.x; this.y = -this.y; this.z = -this.z; return this; }
-  invert() {
-    const norm = this.lengthSquared();
-    if (norm <= EPSILON) return this.set(0, 0, 0, 1);
-    this.conjugate();
-    this.x /= norm; this.y /= norm; this.z /= norm; this.w /= norm;
-    return this;
-  }
+  constructor(x=0,y=0,z=0,w=1) { this.x=x; this.y=y; this.z=z; this.w=w; }
+  set(x,y,z,w) { this.x=x; this.y=y; this.z=z; this.w=w; return this; }
+  copy(q) { return this.set(q.x,q.y,q.z,q.w); }
+  clone() { return new Quaternion(this.x,this.y,this.z,this.w); }
+  lengthSquared() { return this.x*this.x+this.y*this.y+this.z*this.z+this.w*this.w; }
+  normalize() { const n=Math.sqrt(this.lengthSquared()); if(n<=EPSILON)return this.set(0,0,0,1); return this.set(this.x/n,this.y/n,this.z/n,this.w/n); }
+  conjugate() { this.x=-this.x; this.y=-this.y; this.z=-this.z; return this; }
+  invert() { const n=this.lengthSquared(); if(n<=EPSILON)return this.set(0,0,0,1); this.conjugate(); this.x/=n; this.y/=n; this.z/=n; this.w/=n; return this; }
   multiply(q) {
-    const ax=this.x, ay=this.y, az=this.z, aw=this.w;
-    const bx=q.x, by=q.y, bz=q.z, bw=q.w;
-    return this.set(
-      aw*bx + ax*bw + ay*bz - az*by,
-      aw*by - ax*bz + ay*bw + az*bx,
-      aw*bz + ax*by - ay*bx + az*bw,
-      aw*bw - ax*bx - ay*by - az*bz
-    );
+    const {x:aX,y:aY,z:aZ,w:aW}=this,{x:bX,y:bY,z:bZ,w:bW}=q;
+    return this.set(aW*bX+aX*bW+aY*bZ-aZ*bY,aW*bY-aX*bZ+aY*bW+aZ*bX,aW*bZ+aX*bY-aY*bX+aZ*bW,aW*bW-aX*bX-aY*bY-aZ*bZ);
   }
-  setFromAxisAngle(axis, angle) {
-    const normalized = axis.normalized();
-    const half = angle * 0.5, s = Math.sin(half);
-    return this.set(normalized.x*s, normalized.y*s, normalized.z*s, Math.cos(half)).normalize();
-  }
-  rotateVector(v) {
-    const qv = new Vector3(this.x, this.y, this.z);
-    const uv = Vector3.cross(qv, v);
-    const uuv = Vector3.cross(qv, uv);
-    uv.multiplyScalar(2 * this.w);
-    uuv.multiplyScalar(2);
-    return v.clone().add(uv).add(uuv);
-  }
-  equals(q, epsilon = 1e-9) {
-    return Math.abs(this.x-q.x)<=epsilon && Math.abs(this.y-q.y)<=epsilon &&
-      Math.abs(this.z-q.z)<=epsilon && Math.abs(this.w-q.w)<=epsilon;
-  }
-  static identity() { return new Quaternion(); }
+  setFromAxisAngle(axis,angle) { const a=axis.normalized(),h=angle/2,s=Math.sin(h); return this.set(a.x*s,a.y*s,a.z*s,Math.cos(h)).normalize(); }
+  rotateVector(v) { const qv=new Vector3(this.x,this.y,this.z),uv=Vector3.cross(qv,v),uuv=Vector3.cross(qv,uv); return v.clone().add(uv.multiplyScalar(2*this.w)).add(uuv.multiplyScalar(2)); }
 }

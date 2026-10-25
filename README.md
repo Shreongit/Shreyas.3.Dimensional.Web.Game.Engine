@@ -1,6 +1,6 @@
-# S3DWGE — Stage 2: WebGL 2 Rendering
+# S3DWGE — Stage 4: 3D Physics
 
-**Version `0.3.0-engine-systems.1`**
+**Version `0.4.0-physics.1`**
 
 Stage 3 extends the WebGL 2 renderer with reusable engine systems: event subscriptions, keyboard/pointer input, asynchronous resource caching, and a source-first glTF 2.0 / GLB 2.0 geometry loader.
 
@@ -17,6 +17,7 @@ Stage 3 extends the WebGL 2 renderer with reusable engine systems: event subscri
 - Input manager with pressed/down/released keyboard states and pointer deltas.
 - Resource manager with typed loaders, in-flight request de-duplication, caching and invalidation.
 - glTF/GLB loader for triangle mesh geometry, buffers, accessors, node transforms and generated normals.
+- 3D physics with fixed-step integration, gravity, force/impulse application, damping, sphere and axis-aligned box shapes, sphere-sphere / sphere-box / box-box collision, impulse response, friction, restitution, triggers, collision lifecycle events, sweep-and-prune broad phase and raycasts.
 
 ## Requirements
 - Node.js 18+ for tests and local server.
@@ -28,6 +29,25 @@ npm run ci
 npm run serve
 ```
 Open `http://127.0.0.1:4173/`.
+
+## Physics quick start
+```js
+import { PhysicsWorld, RigidBody, SphereShape, BoxShape, Vector3, Ray } from "./src/index.js";
+
+const physics = new PhysicsWorld({ gravity: new Vector3(0, -9.81, 0) });
+const floor = physics.addBody(new RigidBody({
+  shape: new BoxShape(new Vector3(10, 0.5, 10)), mass: 0,
+  position: new Vector3(0, -1, 0)
+}));
+const ball = physics.addBody(new RigidBody({
+  shape: new SphereShape(0.5), mass: 1, position: new Vector3(0, 3, 0), restitution: 0.2
+}));
+physics.events.on("collisionenter", ({ a, b, contact }) => console.log("Impact", a, b, contact));
+physics.step(1 / 60); // Call with frame delta; the world internally uses fixed steps.
+const hit = physics.raycast(new Ray(new Vector3(0, 5, 0), new Vector3(0, -1, 0)));
+```
+
+Physics scope: box collision is axis-aligned (rotation is not applied to box bounds); the solver is a lightweight engine foundation, not a substitute for a mature production physics SDK. It does not yet include angular velocity/inertia, joints, continuous collision detection, convex/triangle meshes, or sleeping.
 
 ## Importing
 This is a source-first project, not yet published to npm:

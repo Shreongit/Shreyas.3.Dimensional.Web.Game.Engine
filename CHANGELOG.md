@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0-physics.1
+- Added fixed-step PhysicsWorld, gravity and force/impulse integration.
+- Added sphere and axis-aligned box colliders with collision resolution, restitution, friction, trigger/collision lifecycle events and sweep-and-prune broad phase.
+- Added normalized rays and nearest-hit raycasting.
+- Added physics API exports and focused regression tests.
+- Scope limitations documented: no rotational inertia, joints, CCD or mesh colliders.
+
+# Changelog
+
 ## 0.2.0-renderer.1
 - Added WebGL 2 renderer and resource lifecycle.
 - Added perspective camera, indexed mesh, material and GLSL ES 3.00 shaders.

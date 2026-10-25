@@ -17,3 +17,7 @@ export { ResourceManager } from "./systems/ResourceManager.js";
 export { EventEmitter } from "./systems/EventEmitter.js";
 export { InputManager } from "./systems/InputManager.js";
 export { GLTFLoader } from "./assets/GLTFLoader.js";
+
+export { SphereShape, BoxShape, Ray } from "./physics/CollisionShapes.js";
+export { RigidBody } from "./physics/RigidBody.js";
+export { PhysicsWorld } from "./physics/PhysicsWorld.js";

@@ -1,10 +1,17 @@
 {
   "name": "s3dwge",
-  "version": "0.3.0-engine-systems.1",
-  "description": "Shreyas 3D Web Game Engine — WebGL 2 rendering milestone",
+  "version": "0.4.0-physics.1",
+  "description": "Shreyas 3D Web Game Engine \u2014 physics systems milestone",
   "type": "module",
   "private": true,
   "license": "UNLICENSED",
-  "engines": { "node": ">=18" },
-  "scripts": { "test": "node --test", "check": "node scripts/check.mjs", "ci": "npm run check && npm test", "serve": "node scripts/serve.mjs" }
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node scripts/check.mjs",
+    "ci": "npm run check && npm test",
+    "serve": "node scripts/serve.mjs"
+  }
 }

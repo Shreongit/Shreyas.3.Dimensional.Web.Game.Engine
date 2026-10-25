@@ -22,3 +22,31 @@ test('raycast returns nearest hit, point, normal and respects max distance',()=>
 test('world validates time and ray inputs, removes bodies and disposes safely',()=>{
  const world=new PhysicsWorld();const body=world.addBody(new RigidBody({shape:new SphereShape()}));assert.throws(()=>world.step(-1),RangeError);assert.throws(()=>world.raycast({}),TypeError);assert.equal(world.removeBody(body),true);assert.equal(world.removeBody(body),false);world.dispose();assert.equal(world.bodies.length,0);
 });
+
+test('collision layer and mask filters suppress disallowed pairs',()=>{
+ const world=new PhysicsWorld({gravity:new Vector3()});
+ world.addBody(new RigidBody({shape:new SphereShape(1),position:new Vector3(),collisionLayer:1,collisionMask:1}));
+ const b=world.addBody(new RigidBody({shape:new SphereShape(1),position:new Vector3(1,0,0),collisionLayer:2,collisionMask:2}));
+ world.step(1/60);assert.ok(Math.abs(b.position.x-1)<1e-9);
+});
+
+test('continuous sphere prevents tunnelling through a thin static box',()=>{
+ const world=new PhysicsWorld({gravity:new Vector3(),fixedDeltaSeconds:1/60,maxSubSteps:1});
+ world.addBody(new RigidBody({shape:new BoxShape(new Vector3(.05,2,2)),mass:0,position:new Vector3(0,0,0)}));
+ const ball=world.addBody(new RigidBody({shape:new SphereShape(.2),position:new Vector3(-3,0,0),velocity:new Vector3(400,0,0),linearDamping:0,continuous:true,restitution:0}));
+ world.step(1/60);assert.ok(ball.position.x<0.3,`sphere crossed wall: x=${ball.position.x}`);assert.ok(ball.velocity.x<=0,`expected velocity to be stopped/reflected, got ${ball.velocity.x}`);
+});
+
+test('AABB query returns only enabled overlapping bodies and can exclude triggers',()=>{
+ const world=new PhysicsWorld({gravity:new Vector3()});
+ const a=world.addBody(new RigidBody({shape:new SphereShape(.5),position:new Vector3()}));
+ const trigger=world.addBody(new RigidBody({shape:new SphereShape(.5),position:new Vector3(.2,0,0),isTrigger:true}));
+ const far=world.addBody(new RigidBody({shape:new SphereShape(.5),position:new Vector3(10,0,0)}));
+ const found=world.queryAABB(new Vector3(-1,-1,-1),new Vector3(1,1,1),{includeTriggers:false});
+ assert.deepEqual(found,[a]);trigger.enabled=false;assert.deepEqual(world.queryAABB(new Vector3(-1,-1,-1),new Vector3(1,1,1)),[a]);assert.ok(!found.includes(far));
+});
+
+test('body validates collision filter bitmasks',()=>{
+ assert.throws(()=>new RigidBody({shape:new SphereShape(),collisionLayer:-1}),RangeError);
+ assert.throws(()=>new RigidBody({shape:new SphereShape(),collisionMask:1.5}),RangeError);
+});

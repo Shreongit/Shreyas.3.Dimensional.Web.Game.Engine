@@ -1,7 +1,7 @@
 {
   "name": "s3dwge",
-  "version": "0.4.0-physics.1",
-  "description": "Shreyas 3D Web Game Engine \u2014 physics systems milestone",
+  "version": "0.5.0-advanced-physics.1",
+  "description": "Shreyas 3D Web Game Engine \u2014 advanced physics milestone",
   "type": "module",
   "private": true,
   "license": "UNLICENSED",
